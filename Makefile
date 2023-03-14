@@ -10,7 +10,11 @@ S3_BUCKET := 你的S3存储桶名称
 # 设置部署包的名称
 DEPLOYMENT_PACKAGE := deployment-package.zip
 
+# 设置你的Runtime version ARN
+ROLE := arn:aws:lambda:us-east-1::runtime:cb7b67d90cfa2cac75319b603ddfe27dfd4a3e64d830ef7ba99a87d7d5a55ce1 
+
 # 构建部署包
+# export GOPROXY=https://goproxy.cn,direct
 build:
 	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o main
 	zip -r $(DEPLOYMENT_PACKAGE) main
@@ -22,7 +26,7 @@ deploy: build
 		--function-name $(FUNCTION_NAME) \
 		--handler main \
 		--runtime go1.x \
-		--role your-aws-lambda-role-arn \
+		--role $(ROLE) \
 		--zip-file fileb://$(DEPLOYMENT_PACKAGE)
 
 # 更新 Lambda 函数
